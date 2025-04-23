@@ -1,42 +1,34 @@
-'use client';
-
-import type { Editor } from "@grapesjs/studio-sdk/dist/typeConfigs/gjsExtend.js";
-import { saveAs } from "file-saver";
 import JSZip from "jszip";
-import { useCallback } from "react";
+import * as FileSaver from 'file-saver';
+import type { Editor } from "@grapesjs/studio-sdk/dist/typeConfigs/gjsExtend.js";
 
-export function ExportInAngular({ editor }: { editor?: Editor }) {
-  const exportZip = useCallback(async () => {
-    if (!editor) return;
+// Esta es la lógica del export, extraída de tu componente
+export async function ExportToAngular(editor: Editor, projectName: string) {
+  if (!editor) return;
 
-    const zip = new JSZip();
+  const zip = new JSZip();
 
-    // 1) Extraemos el proyecto completo original
-    const originalProject = editor.getProjectData();
+  const originalProject = editor.getProjectData();
 
-    // 2) Por cada página, recargamos SOLO esa página y extraemos su HTML/CSS
-    const pagesWithCode: Array<{
-      id: string;
-      name: string;
-      html: string;
-      css: string;
-    }> = [];
-    for (const page of originalProject.pages) {
-      editor.loadProjectData({ ...originalProject, pages: [page] });
-      const html = editor.getHtml();
-      const css  = editor.getCss() || '';
-      pagesWithCode.push({ id: page.id, name: page.name, html, css });
-    }
+  const pagesWithCode: Array<{
+    id: string;
+    name: string;
+    html: string;
+    css: string;
+  }> = [];
+  for (const page of originalProject.pages) {
+    editor.loadProjectData({ ...originalProject, pages: [page] });
+    const html = editor.getHtml();
+    const css = editor.getCss() || '';
+    pagesWithCode.push({ id: page.id, name: page.name, html, css });
+  }
 
-    // 3) Restauramos el proyecto completo en el editor
-    editor.loadProjectData(originalProject);
+  editor.loadProjectData(originalProject);
 
-    // 4) Preparamos el JSON que incluirá html+css por página
-    const projectWithCode = { ...originalProject, pages: pagesWithCode };
-    zip.file("grapesjs-project.json", JSON.stringify(projectWithCode, null, 2));
+  const projectWithCode = { ...originalProject, pages: pagesWithCode };
+  zip.file(`${projectName}.json`, JSON.stringify(projectWithCode, null, 2));
 
-    // 5) Script de generación (generate-from-grapes.js)
-    const scriptContent = `#!/usr/bin/env node
+  const scriptContent = `#!/usr/bin/env node
 /**
  * generate-from-grapes.js
  * Automatiza la creación de un proyecto Angular v19
@@ -46,16 +38,24 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Obtener el nombre del archivo actual sin la extensión .js
+const projectName = path.basename(__filename, '.js');  // Usamos __filename para obtener la ruta completa del archivo
+
+if (!projectName) {
+  console.error("Error: El nombre del proyecto no puede ser vacío.");
+  process.exit(1);  // Salir si no se puede obtener el nombre
+}
+
 // 1) Crear proyecto base sin analytics ni prompts
-const appName = 'grapesjs-angular-app';
+const appName = \`\${projectName}\`;
 console.log('⚙️  ng new', appName);
 execSync(\`npx @angular/cli@19 new \${appName} --routing --style=css --skip-install --defaults\`, { stdio: 'inherit' });
 
 // 2) Copiar JSON dentro
-fs.copyFileSync('grapesjs-project.json', \`\${appName}/grapesjs-project.json\`);
+fs.copyFileSync(\`\${appName}.json\`, \`\${appName}/grapesjs-project.json\`);
 
 // 3) Generar componentes y volcar HTML/CSS
-const project = require(path.resolve('grapesjs-project.json'));
+const project = require(path.resolve(\`\${appName}.json\`));
 project.pages.forEach(page => {
   const nameKebab = page.name.toLowerCase().replace(/\\s+/g, '-');
   console.log('🚀 Generando componente', nameKebab);
@@ -74,7 +74,7 @@ project.pages.forEach(page => {
   );
 });
 
-// 4) Generar dinámicamente el AppRoutingModule
+// 4) Generar dinámicamente el app.routes.ts
 (() => {
   const imports = project.pages.map(page => {
     const kebab = page.name.toLowerCase().replace(/\\s+/g, '-');
@@ -82,7 +82,7 @@ project.pages.forEach(page => {
       .split(/\\s+/g)
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join('') + 'Component';
-    return \`import { \${className} } from './pages/\${kebab}/\${kebab}.component';\`;
+     return \`import { \${className} } from './pages/\${kebab}/\${kebab}.component';\`;
   }).join('\\n');
 
   const routes = project.pages.map((page, i) => {
@@ -95,27 +95,22 @@ project.pages.forEach(page => {
     return \`  { path: \${pathStr}, component: \${className} },\`;
   }).join('\\n');
 
-  const routingModule = \`import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-\${imports}
+  const routesFileContent = \`// Este archivo es generado automáticamente
+\${imports}  // Incluir los imports generados
 
-const routes: Routes = [
-\${routes}
-  { path: '**', redirectTo: '' }
+export const routes = [
+\${routes}  // Incluir las rutas generadas
+  { path: '**', redirectTo: '' }  // Ruta de fallback
 ];
+\`;
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule {}\`;
-
+  // Generamos el archivo app.routes.ts con las rutas dinámicas
   fs.writeFileSync(
-    path.join(appName, 'src/app/app-routing.module.ts'),
-    routingModule,
+    path.join(appName, 'src/app/app.routes.ts'),
+    routesFileContent,
     'utf-8'
   );
-  console.log('✅ app-routing.module.ts generado dinámicamente');
+  console.log('✅ app.routes.ts generado dinámicamente');
 })();
 
 // 4.5) Sobreescribir app.component.html con <router-outlet> y menú
@@ -130,6 +125,27 @@ export class AppRoutingModule {}\`;
   const appCompHtml = \`<nav>\${navLinks}</nav>
 <hr/>
 <router-outlet></router-outlet>\`;
+
+const appCompTs = \`
+
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';  // Importamos RouterModule aquí
+import { routes } from './app.routes';  // Importa las rutas definidas
+
+@Component({
+  selector: 'app-root',
+  standalone: true,  // Este es un componente standalone
+  imports: [RouterModule],  // Aquí agregamos RouterModule dinámicamente
+  templateUrl: './app.component.html',
+})
+export class AppComponent {}
+  \`;
+
+  fs.writeFileSync(
+    path.join(appName, 'src/app/app.component.ts'),
+    appCompTs,
+    'utf-8'
+  );
 
   fs.writeFileSync(
     path.join(appName, 'src/app/app.component.html'),
@@ -146,40 +162,28 @@ execSync('npm install', { cwd: appName, stdio: 'inherit' });
 console.log('🎉 ¡Todo listo! Ahora entra en ' + appName + ' y ejecuta:');
 console.log('    npm start');
 `;
-    zip.file("generate-from-grapes.js", scriptContent, { unixPermissions: "755" });
+  zip.file(`${projectName}.js`, scriptContent, { unixPermissions: "755" });
 
-    // 6) README.txt
-    const readme = `
+  const readme = `
 # Instrucciones de generación
 
 1. Descomprime este ZIP.
 2. Abre terminal en la carpeta resultante.
 3. Ejecuta:
    \`\`\`
-   node generate-from-grapes.js
+   node \`\${projectName}.js\`
    \`\`\`
 4. Entra en la carpeta creada:
    \`\`\`
-   cd grapesjs-angular-app
+   cd \`\${projectName}\`
    npm start
    \`\`\`
 5. Abre http://localhost:4200.
 
 > **Requisitos**: Node.js y conexión a Internet.
 `;
-    zip.file("README.txt", readme.trim());
+  zip.file("README.txt", readme.trim());
 
-    // 7) Descarga el ZIP
-    const content = await zip.generateAsync({ type: "blob" });
-    saveAs(content, "grapesjs-angular-bootstrap.zip");
-  }, [editor]);
-
-  return (
-    <button
-      onClick={exportZip}
-      className="px-4 py-2 bg-teal-600 text-white rounded"
-    >
-      Exportar ZIP con proyecto Angular
-    </button>
-  );
+  const content = await zip.generateAsync({ type: "blob" });
+  FileSaver.saveAs(content, `${projectName}.zip`);
 }

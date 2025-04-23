@@ -1,12 +1,12 @@
-import type { Editor } from "grapesjs";
+import { type Editor } from "grapesjs";
 import { useState } from "react";
 import GrapesJsStudio from "@grapesjs/studio-sdk/react";
-import { ExportInAngular } from "./components/export_in_angular";
+import "@grapesjs/studio-sdk/style";
 import { TransformXmlAngular } from "./components/transform_xml_in_angular";
+import ExportToAngularModal from "./components/export_in_angular_modal";
 
 export default function StudioEditor() {
   const [editor, setEditor] = useState<Editor>();
-
   const onReady = (editor: Editor) => {
     setEditor(editor);
   };
@@ -16,7 +16,8 @@ export default function StudioEditor() {
       <div className="p-1 flex gap-5">
         <div className="font-bold">SDK example Astro</div>
         <TransformXmlAngular />
-        <ExportInAngular editor={editor} />
+        {/* <ExportInAngular editor={editor} /> */}
+        <ExportToAngularModal editor={editor} />
       </div>
       <div className="flex-1 w-full h-full overflow-hidden">
         <GrapesJsStudio

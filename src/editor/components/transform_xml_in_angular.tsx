@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
+import * as FileSaver from 'file-saver';
 import type { ParseModel } from '../utils/xml_parser';
 import { ParseModelXml } from '../utils/xml_parser';
 
@@ -176,7 +176,7 @@ console.log('🎉 ¡Listo! cd ' + appName + ' && npm start');
       );
 
       const blob = await zip.generateAsync({ type: 'blob' });
-      saveAs(blob, 'model-angular-bootstrap.zip');
+      FileSaver.saveAs(blob, 'model-angular-bootstrap.zip');
     } catch (err) {
       console.error('Error generando ZIP:', err);
     } finally {
