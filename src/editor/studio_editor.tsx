@@ -2,9 +2,9 @@ import { type Editor } from "grapesjs";
 import { useState } from "react";
 import GrapesJsStudio from "@grapesjs/studio-sdk/react";
 import "@grapesjs/studio-sdk/style";
-import { TransformXmlAngular } from "./components/transform_xml_in_angular";
 import ExportToAngularModal from "./components/export_in_angular_modal";
 import ExportFromImageModal from "./components/image_to_code_modal";
+import ExportXmlToAngularModal from "./components/xml_to_angular_modal";
 
 export default function StudioEditor() {
   const [editor, setEditor] = useState<Editor>();
@@ -15,9 +15,8 @@ export default function StudioEditor() {
   return (
     <main className="flex h-screen flex-col justify-between p-5 gap-2">
       <div className="p-1 flex gap-5">
-        <div className="font-bold">SDK example Astro</div>
-        <TransformXmlAngular />
-        {/* <ExportInAngular editor={editor} /> */}
+        <div className="font-bold">Maquetador Angular</div>
+        <ExportXmlToAngularModal />
         <ExportToAngularModal editor={editor} />
         <ExportFromImageModal editor={editor} />
       </div>

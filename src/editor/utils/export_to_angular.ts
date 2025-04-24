@@ -5,6 +5,22 @@ import type { Editor } from "@grapesjs/studio-sdk/dist/typeConfigs/gjsExtend.js"
 export async function ExportToAngular(editor: Editor, projectName: string="export_angular") {
   if (!editor) return;
 
+  const pages = editor.Pages.getAll();
+  const names = pages.map(p => p.get('name'));
+  const uniqueNames = new Set(names);
+
+  if (uniqueNames.size !== names.length) {
+    window.dispatchEvent(
+      new CustomEvent('toast', {
+        detail: {
+          message: 'Hay páginas con nombres duplicados. Cámbialas antes de exportar.',
+          variant: 'warning'
+        }
+      })
+    )
+    return; 
+  }
+
   const zip = new JSZip();
 
   const originalProject = editor.getProjectData();

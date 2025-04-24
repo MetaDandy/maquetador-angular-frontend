@@ -5,14 +5,37 @@ import Modal from '../../components/react/modal';
 
 export default function ExportToAngularModal({ editor }: { editor?: Editor }) {
   const [projectName, setProjectName] = useState('grapesjs-angular-app');
+  const [isOpen, setIsOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleExport = () => {
+
+  const handleExport = async () => {
     if (!editor) return;
-    ExportToAngular(editor, projectName);
+    setIsProcessing(true);
+    setTimeout(async () => {
+      try {
+        await ExportToAngular(editor, projectName);
+        setIsOpen(false);
+      } catch (err) {
+        console.error(err);
+        window.dispatchEvent(
+          new CustomEvent('toast', {
+            detail: {
+              message: 'Error al generar el proyecto Angular, inténtelo de nuevo mas tarde.',
+              variant: 'error'
+            }
+          })
+        )
+      } finally {
+        setIsProcessing(false);
+      }
+    }, 0);
   };
 
   return (
     <Modal
+      open={isOpen}
+      onOpenChange={setIsOpen}
       trigger={<button className="btn btn-soft">Exportar a Angular</button>}
       title="Nombre del proyecto"
     >
@@ -27,8 +50,11 @@ export default function ExportToAngularModal({ editor }: { editor?: Editor }) {
         <button
           onClick={handleExport}
           className="btn btn-success w-full"
+          disabled={isProcessing}
         >
-          Generar Proyecto Angular
+          {isProcessing
+            ? <span className="loading loading-spinner" />
+            : 'Generar Proyecto Angular'}
         </button>
       </div>
     </Modal>

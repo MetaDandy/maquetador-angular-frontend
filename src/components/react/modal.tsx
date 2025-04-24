@@ -5,17 +5,28 @@ interface ModalProps {
   trigger: ReactNode;
   title?: string;
   children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export default function Modal({ trigger, title, children }: ModalProps) {
-  const [open, setOpen] = useState(false);
+export default function Modal({
+  trigger,
+  title,
+  children,
+  open: openProp,
+  onOpenChange,
+}: ModalProps) {
+  const isControlled = openProp !== undefined && onOpenChange;
+  const [uncontrolled, setUncontrolled] = useState(false);
+  const isOpen = isControlled ? openProp! : uncontrolled;
+  const setOpen = isControlled ? onOpenChange! : setUncontrolled;
 
   return (
     <>
       <div onClick={() => setOpen(true)} className="inline-block cursor-pointer">
         {trigger}
       </div>
-      <div className={`modal ${open ? 'modal-open' : ''}`}>
+      <div className={`modal ${isOpen ? 'modal-open' : ''}`}>
         <div className="modal-box relative">
           {/* botón de cierre */}
           <button
