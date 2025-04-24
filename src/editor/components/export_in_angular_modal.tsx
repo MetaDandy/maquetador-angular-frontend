@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Editor } from 'grapesjs';
+import type { Editor } from '@grapesjs/studio-sdk/dist/typeConfigs/gjsExtend.js';
 import { ExportToAngular } from '../utils/export_to_angular';
 import Modal from '../../components/react/modal';
 

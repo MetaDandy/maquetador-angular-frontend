@@ -2,8 +2,7 @@ import JSZip from "jszip";
 import * as FileSaver from 'file-saver';
 import type { Editor } from "@grapesjs/studio-sdk/dist/typeConfigs/gjsExtend.js";
 
-// Esta es la lógica del export, extraída de tu componente
-export async function ExportToAngular(editor: Editor, projectName: string) {
+export async function ExportToAngular(editor: Editor, projectName: string="export_angular") {
   if (!editor) return;
 
   const zip = new JSZip();
@@ -46,15 +45,12 @@ if (!projectName) {
   process.exit(1);  // Salir si no se puede obtener el nombre
 }
 
-// 1) Crear proyecto base sin analytics ni prompts
 const appName = \`\${projectName}\`;
 console.log('⚙️  ng new', appName);
 execSync(\`npx @angular/cli@19 new \${appName} --routing --style=css --skip-install --defaults\`, { stdio: 'inherit' });
 
-// 2) Copiar JSON dentro
 fs.copyFileSync(\`\${appName}.json\`, \`\${appName}/grapesjs-project.json\`);
 
-// 3) Generar componentes y volcar HTML/CSS
 const project = require(path.resolve(\`\${appName}.json\`));
 project.pages.forEach(page => {
   const nameKebab = page.name.toLowerCase().replace(/\\s+/g, '-');
@@ -74,7 +70,6 @@ project.pages.forEach(page => {
   );
 });
 
-// 4) Generar dinámicamente el app.routes.ts
 (() => {
   const imports = project.pages.map(page => {
     const kebab = page.name.toLowerCase().replace(/\\s+/g, '-');
@@ -104,7 +99,6 @@ export const routes = [
 ];
 \`;
 
-  // Generamos el archivo app.routes.ts con las rutas dinámicas
   fs.writeFileSync(
     path.join(appName, 'src/app/app.routes.ts'),
     routesFileContent,
@@ -178,7 +172,6 @@ console.log('    npm start');
    cd \`\${projectName}\`
    npm start
    \`\`\`
-5. Abre http://localhost:4200.
 
 > **Requisitos**: Node.js y conexión a Internet.
 `;
