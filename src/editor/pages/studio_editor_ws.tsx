@@ -2,12 +2,12 @@ import { type Editor } from "grapesjs";
 import { useEffect, useRef, useState } from "react";
 import GrapesJsStudio from "@grapesjs/studio-sdk/react";
 import "@grapesjs/studio-sdk/style";
-import ExportToAngularModal from "./components/export_in_angular_modal";
-import ExportFromImageModal from "./components/image_to_code_modal";
-import ExportXmlToAngularModal from "./components/xml_to_angular_modal";
-import type { RemoteMessage } from "./types/studio";
-import ApplyRemoteChange from "./utils/apply_remote_change";
-import { debounce } from './utils/debounce';
+import ExportToAngularModal from "../components/export_in_angular_modal";
+import ExportFromImageModal from "../components/image_to_code_modal";
+import ExportXmlToAngularModal from "../components/xml_to_angular_modal";
+import type { RemoteMessage } from "../types/studio";
+import ApplyRemoteChange from "../utils/apply_remote_change";
+import { debounce } from '../utils/debounce';
 
 // ! TODO: Parsear los nombres de las hojas, que sea todo caracter ingles!!!!!!!
 // ! no dejar - ñ

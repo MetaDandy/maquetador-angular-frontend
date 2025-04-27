@@ -1,0 +1,14 @@
+---
+import NavAuth from "./react/nav_auth";
+
+---
+
+<nav class="navbar bg-base-100 shadow-md">
+  <div class="text-xl font-bold navbar-start">Maquetador Angular</div>
+  <div class="flex items-center space-x-4 navbar-end">
+    <a href="/" class="btn btn-ghost">Inicio</a>
+    <a href="/features" class="btn btn-ghost">Características</a>
+
+    <NavAuth client:load/>
+  </div>
+</nav>

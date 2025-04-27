@@ -1,11 +1,12 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import StudioEditor from '../studio_editor';
+import StudioEditor from './pages/studio_editor';
 
 export default function StudioRouter() {
   return (
     <HashRouter>
       <Routes>
         {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<StudioEditor />} />
         <Route path=":pageId/*" element={<StudioEditor />} />
       </Routes>
     </HashRouter>
