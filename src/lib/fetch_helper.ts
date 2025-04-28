@@ -24,8 +24,8 @@ export async function FetchHelper<T>({
   });
 
   if (!res.ok) {
-    const errorMessage = await res.text();
-    throw new Error(`Error ${method}: ${res.status} - ${errorMessage}`);
+    const err = await res.json();
+    throw new Error(`Error: ${err.error} ${err.err}`);
   }
 
   return res.json();

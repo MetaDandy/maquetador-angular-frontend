@@ -28,7 +28,6 @@ export default function Home() {
 
   const onSubmit = async (data: any) => {
     setLockScreen({ isVisible: true, type: "loading", content: "Registrando..." });
-    console.log(data);
     try {
       const signup = await fetch(API_ROUTES.SIGNUP, {
         method: "POST",
@@ -47,7 +46,7 @@ export default function Home() {
       setToken(response.token);
       showToast('Registro exitoso', "Bienvenido", "success");
       reset();
-      router.push('/dashboard');
+      router.push('/studio');
     } catch (error: any) {
       showToast("Error", error.message, "error");
       console.error("Error en la solicitud:", error);

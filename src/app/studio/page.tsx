@@ -9,6 +9,7 @@ import useAppStore from "@/lib/store";
 import ExportToAngularModal from "./components/export_to_angular_modal";
 import { Button } from "@/components/ui/button";
 import ExportFromImageModal from "./components/image_to_code_modal";
+import SaveProject from "./components/save_project";
 
 // ! TODO: Parsear los nombres de las hojas, que sea todo caracter ingles!!!!!!!
 // ! no dejar - ñ
@@ -53,6 +54,18 @@ export default function StudioEditor() {
     });
   }
 
+  const handleSave = () => {
+    setSheet({
+      isOpen: true,
+      title: `Guardar proyecto`,
+      description: 'Ingrese los datos del proyecto',
+      btnAction: null,
+      btnCancel: null,
+      content: <SaveProject />,
+      side: "right"
+    });
+  }
+
   const onReady = (editor: Editor) => {
     setEditor(editor);
   };
@@ -60,7 +73,6 @@ export default function StudioEditor() {
   return (
     <main className="flex h-screen flex-col justify-between p-5 gap-2">
       <div className="p-1 flex gap-5">
-        <div className="font-bold">Maquetador Angular</div>
         <Button onClick={() => handleExportAngular()} variant="ghost">
           Exportar a angular
         </Button>
@@ -69,6 +81,9 @@ export default function StudioEditor() {
         </Button>
         <Button onClick={() => handleImage()} variant="ghost">
           Subir imagen
+        </Button>
+        <Button onClick={() => handleSave()} variant="ghost">
+          Guardar proyecto
         </Button>
       </div>
       <div className="flex-1 w-full h-full overflow-hidden">
