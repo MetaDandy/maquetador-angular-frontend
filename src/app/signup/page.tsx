@@ -40,7 +40,6 @@ export default function Home() {
 
       const response = await signup.json();
 
-      console.log(response.err, response.error)
       if (!signup.ok) throw new Error(response || "Error de autenticación");
 
       setToken(response.token);

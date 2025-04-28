@@ -1,6 +1,7 @@
 import JSZip from "jszip";
 import * as FileSaver from 'file-saver';
 import type { Editor } from "@grapesjs/studio-sdk/dist/typeConfigs/gjsExtend.js";
+import { normalizeName } from "@/lib/normalize_name";
 
 export async function ExportToAngular(editor: Editor, projectName: string="export_angular", showToast: any) {
   if (!editor) return;
@@ -10,14 +11,6 @@ export async function ExportToAngular(editor: Editor, projectName: string="expor
   const uniqueNames = new Set(names);
 
   if (uniqueNames.size !== names.length) {
-    window.dispatchEvent(
-      new CustomEvent('toast', {
-        detail: {
-          message: 'Hay páginas con nombres duplicados. Cámbialas antes de exportar.',
-          variant: 'warning'
-        }
-      })
-    )
     showToast(
       `Hay páginas con nombres duplicados`,
       'Cámbialas antes de exportar',
@@ -38,9 +31,10 @@ export async function ExportToAngular(editor: Editor, projectName: string="expor
   }> = [];
   for (const page of originalProject.pages) {
     editor.loadProjectData({ ...originalProject, pages: [page] });
+    const normalizedPageName = normalizeName(page.name);
     const html = editor.getHtml();
     const css = editor.getCss() || '';
-    pagesWithCode.push({ id: page.id, name: page.name, html, css });
+    pagesWithCode.push({ id: page.id, name: normalizedPageName, html, css });
   }
 
   editor.loadProjectData(originalProject);

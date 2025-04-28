@@ -11,9 +11,6 @@ import { Button } from "@/components/ui/button";
 import ExportFromImageModal from "./components/image_to_code_modal";
 import SaveProject from "./components/save_project";
 
-// ! TODO: Parsear los nombres de las hojas, que sea todo caracter ingles!!!!!!!
-// ! no dejar - ñ
-
 export default function StudioEditor() {
   const { setSheet } = useAppStore();
   const [editor, setEditor] = useState<Editor>();

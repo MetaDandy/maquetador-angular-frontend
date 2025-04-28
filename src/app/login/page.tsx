@@ -44,7 +44,7 @@ export default function Home() {
       setToken(response.token);
       showToast('Inicio de sesión exitoso', "Bienvenido de vuelta", "success");
       reset();
-      router.push('/dashboard');
+      router.push('/studio');
     } catch (error: any) {
       showToast("Error", error.message, "error");
       console.error("Error en la solicitud:", error);

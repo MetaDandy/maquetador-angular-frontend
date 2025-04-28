@@ -11,10 +11,12 @@ import { Editor } from "grapesjs";
 import ExportFromImageModal from "../../components/image_to_code_modal";
 import ExportToAngularModal from "../../components/export_to_angular_modal";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function EditorPage() {
+  const router = useRouter();
+  const { token, hydrate  } = useAuthStore();
   const { id } = useParams();
-  const { token } = useAuthStore();
   const { setSheet, showToast, setLockScreen } = useAppStore();
   const [editor, setEditor] = useState<Editor>();
   const [projectData, setProjectData] = useState<any>(null);
@@ -52,6 +54,11 @@ export default function EditorPage() {
         });
     }
   }, [id, token]);
+
+  useEffect(()=>{
+    hydrate()
+    if (!token) router.push('/login')
+  }, [])
 
   const updateProject = async () => {
     console.log("actualizando")
@@ -111,7 +118,7 @@ export default function EditorPage() {
       description: 'Ingrese el titulo de la página',
       btnAction: null,
       btnCancel: null,
-      content: <ExportFromImageModal />,
+      content: <ExportFromImageModal editor={editor} />,
       side: "bottom"
     });
   }

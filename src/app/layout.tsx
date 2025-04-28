@@ -39,7 +39,7 @@ export default function RootLayout({
         <Alert />
         <ThemeHandler />
         <Toaster position="top-right" richColors />
-        <Navbar/>
+        <Navbar />
         <Modal />
         <Providers>
           <SheetForm />

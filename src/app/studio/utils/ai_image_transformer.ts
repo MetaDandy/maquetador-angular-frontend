@@ -10,7 +10,7 @@ import type { Editor } from '@grapesjs/studio-sdk/dist/typeConfigs/gjsExtend.js'
 export async function AIImageTransformer(
   editor: Editor,
   imageFile: File,
-  pageName = 'imagen-a-html'
+  pageName = 'imagen_a_html'
 ) {
   const apiKey = process.env.PUBLIC_OPENAI_API_KEY;
   if (!apiKey) throw new Error('PUBLIC_OPENAI_API_KEY env var missing');

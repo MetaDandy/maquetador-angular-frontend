@@ -1,3 +1,4 @@
+import { normalizeName } from '@/lib/normalize_name';
 import { parseStringPromise } from 'xml2js';
 import { stripPrefix } from 'xml2js/lib/processors';
 
@@ -55,11 +56,11 @@ export async function ParseModelXml(xml: string): Promise<ParseModel[]> {
     .map((c: any) => {
       const attrsRaw = findAttributes(c);
       const attribute = attrsRaw.map((a: any) => ({
-        name: a.$.name,
+        name: normalizeName(a.$.name ?? ""),
         type: a.$.type ?? 'text',
       }));
       return {
-        name: c.$.name,
+        name: normalizeName(c.$.name ?? ""),
         attribute,
       };
     });
