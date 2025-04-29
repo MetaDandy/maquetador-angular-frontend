@@ -1,9 +1,9 @@
 'use client';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";  // Importación correcta del Button
-import { Separator } from "@/components/ui/separator";  // Importación correcta del Separator
-import Link from "next/link";  // Importación de Link de Next.js
+import { Button } from "@/components/ui/button";  
+import { Separator } from "@/components/ui/separator"; 
+import Link from "next/link";  
 
 export default function HeroSection() {
   return (
@@ -29,13 +29,11 @@ export default function HeroSection() {
               className="h-48 mb-8 mx-auto rounded-full shadow-lg"
             />
             <div className="flex justify-center gap-6">
-              {/* Botón de acción */}
-              <Link href="/comenzar">
+              <Link href="/studio">
                 <Button variant="default" className="bg-teal-600 text-white hover:bg-teal-700 transition duration-300">
                   Comienza ahora
                 </Button>
               </Link>
-              {/* Botón de login */}
               <Link href="/login">
                 <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white transition duration-300">
                   Iniciar sesión

@@ -152,7 +152,7 @@ export default function EditorPage() {
         <GrapesJsStudio
           onReady={onReady}
           options={{
-            licenseKey: "YOUR_LICENSE_KEY",
+            licenseKey: `${process.env.NEXT_PUBLIC_GRAPJS_LICENSE}`,
             project: {
               default: {
                 pages: [

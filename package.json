@@ -26,6 +26,7 @@
     "file-saver": "^2.0.5",
     "framer-motion": "^12.9.2",
     "grapesjs": "^0.22.6",
+    "grapesjs-blocks-basic": "^1.0.2",
     "jszip": "^3.10.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.503.0",
