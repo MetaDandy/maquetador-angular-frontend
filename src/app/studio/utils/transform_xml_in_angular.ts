@@ -46,17 +46,17 @@ fs.copyFileSync('model.json', \`\${appName}/model.json\`);
 
 // Leer el modelo
 const model = require(path.resolve('model.json'));
-const valid = model.filter(c => typeof c.nombre === 'string' && c.nombre.length);
+const valid = model;
 
 // ---------- CRUD + Rutas dinámicas ----------
 valid.forEach(clase => {
-  const kebab = clase.nombre.toLowerCase().replace(/[_\\s]+/g, '-');
-  const className = clase.nombre
+  const kebab = clase.name.toLowerCase().replace(/[_\\s]+/g, '-');
+  const className = clase.name
     .split(/[_\\s]+/g)
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join('') + 'Component';
 
-  console.log('🚀 Generando CRUD para', clase.nombre);
+  console.log('🚀 Generando CRUD para', clase.name);
   execSync(\`npx ng generate component pages/\${kebab} --module=app.module.ts\`, {
     cwd: appName, stdio: 'inherit'
   });
@@ -74,7 +74,7 @@ valid.forEach(clase => {
   styleUrls: ['./\${kebab}.component.css']
 })
 export class \${className} {
-  model: any = { \${clase.atributos.map(a => \`\${a.nombre}: ''\`).join(', ')} };
+  model: any = { \${clase.attribute.map(a => \`\${a.name}: ''\`).join(', ')} };
   items: any[] = [];
   add() { this.items.push({ ...this.model }); this.model = {}; }
 }\`,
@@ -84,14 +84,14 @@ export class \${className} {
   // HTML
   fs.writeFileSync(
     path.join(pageDir, \`\${kebab}.component.html\`),
-    \`<h2>\${clase.nombre} CRUD</h2>
+    \`<h2>\${clase.name} CRUD</h2>
 <form (ngSubmit)="add()">
-  \${clase.atributos.map(a => \`<div class="field"><label>\${a.nombre}</label><input [(ngModel)]="model.\${a.nombre}" name="\${a.nombre}" /></div>\`).join('')}
+  \${clase.attribute.map(a => \`<div class="field"><label>\${a.name}</label><input [(ngModel)]="model.\${a.name}" name="\${a.name}" /></div>\`).join('')}
   <button type="submit">Guardar</button>
 </form>
 <table>
-  <thead><tr>\${clase.atributos.map(a => \`<th>\${a.nombre}</th>\`).join('')}</tr></thead>
-  <tbody><tr *ngFor="let item of items">\${clase.atributos.map(a => \`<td>{{ item.\${a.nombre} }}</td>\`).join('')}</tr></tbody>
+  <thead><tr>\${clase.attribute.map(a => \`<th>\${a.name}</th>\`).join('')}</tr></thead>
+  <tbody><tr *ngFor="let item of items">\${clase.attribute.map(a => \`<td>{{ item.\${a.name} }}</td>\`).join('')}</tr></tbody>
 </table>\`,
     'utf-8'
   );
@@ -108,9 +108,9 @@ export class \${className} {
 (() => {
   const imports = valid
     .map(c => {
-      const kebab = c.nombre.toLowerCase().replace(/[_\s]+/g, '-');
+      const kebab = c.name.toLowerCase().replace(/[_\s]+/g, '-');
       const className =
-        c.nombre
+        c.name
           .split(/[_\s]+/g)
           .map(w => w.charAt(0).toUpperCase() + w.slice(1))
           .join('') + 'Component';
@@ -119,9 +119,9 @@ export class \${className} {
 
   const routes = valid
     .map((c, i) => {
-      const kebab = c.nombre.toLowerCase().replace(/[_\s]+/g, '-');
+      const kebab = c.name.toLowerCase().replace(/[_\s]+/g, '-');
       const className =
-        c.nombre
+        c.name
           .split(/[_\s]+/g)
           .map(w => w.charAt(0).toUpperCase() + w.slice(1))
           .join('') + 'Component';
@@ -151,9 +151,9 @@ export const routes = [
   /* ---- Navegación dinámica ---- */
   const nav = valid
     .map((c, i) => {
-      const kebab = c.nombre.toLowerCase().replace(/[_\s]+/g, '-');
+      const kebab = c.name.toLowerCase().replace(/[_\s]+/g, '-');
       const link = i === 0 ? '/' : '/' + kebab;
-      return \`<a routerLink="\${link}">\${c.nombre}</a>\`;
+      return \`<a routerLink="\${link}">\${c.name}</a>\`;
     })
     .join(' | ');
 

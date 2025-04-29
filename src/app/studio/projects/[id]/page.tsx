@@ -145,7 +145,7 @@ export default function EditorPage() {
           Subir imagen
         </Button>
         <Button onClick={() => handleSave()} variant="ghost">
-          Actializar Proyecto
+          Actualizar Proyecto
         </Button>
       </div>
       <div className="flex-1 w-full h-full overflow-hidden">
