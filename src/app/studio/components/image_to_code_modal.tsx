@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 export default function ExportFromImageModal({ editor }: { editor?: Editor }) {
-  const { setLockScreen, showToast } = useAppStore();
+  const { setLockScreen, showToast, setSheet } = useAppStore();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pageName, setPageName] = useState<string>("Pagina_generada");
@@ -43,6 +43,7 @@ export default function ExportFromImageModal({ editor }: { editor?: Editor }) {
     try {
       await AIImageTransformer(editor, imageFile, pageName);
       showToast("Creación exitosa", `Se creó ${pageName}`, "success");
+      setSheet(false);
     } catch (err) {
       console.error(err);
       showToast(

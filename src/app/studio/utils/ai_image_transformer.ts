@@ -12,8 +12,8 @@ export async function AIImageTransformer(
   imageFile: File,
   pageName = 'imagen_a_html'
 ) {
-  const apiKey = process.env.PUBLIC_OPENAI_API_KEY;
-  if (!apiKey) throw new Error('PUBLIC_OPENAI_API_KEY env var missing');
+  const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+  if (!apiKey) throw new Error('NEXT_PUBLIC_OPENAI_API_KEY env var missing');
 
   // File → base64
   const toBase64 = (file: File) =>

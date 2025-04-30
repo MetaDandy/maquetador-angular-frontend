@@ -46,7 +46,7 @@ export default function StudioEditor() {
       description: 'Ingrese el titulo de la página',
       btnAction: null,
       btnCancel: null,
-      content: <ExportFromImageModal />,
+      content: <ExportFromImageModal editor={editor} />,
       side: "bottom"
     });
   }
